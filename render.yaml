@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: chatbot-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /health
+    envVars:
+      - key: LLM_API_KEYS
+        sync: false
+      - key: MODEL
+        value: gemini/gemini-3-flash-preview
+      - key: DATABASE_URL
+        value: sqlite:////data/app.db
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: ENABLE_FAILURE_SIMULATION
+        value: "true"
+  - type: web
+    name: chatbot-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
